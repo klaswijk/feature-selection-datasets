@@ -59,6 +59,16 @@ class Yale(SkfeatureDataset):
         super().__init__(root, "Yale", download)
 
 
+class USPS(SkfeatureDataset):
+    def __init__(self, root, download=False):
+        super().__init__(root, "USPS", download)
+
+
+class ALLAML(SkfeatureDataset):
+    def __init__(self, root, download=False):
+        super().__init__(root, "ALLAML", download)
+
+
 class Carcinom(SkfeatureDataset):
     def __init__(self, root, download=False):
         super().__init__(root, "Carcinom", download)
