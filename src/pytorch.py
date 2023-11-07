@@ -1,7 +1,7 @@
 import torch
 from torch.utils.data import TensorDataset
 
-from skfeature.datasets import fetch_skfeature
+from .skfeature import fetch_skfeature
 
 
 class SkfeatureDataset(TensorDataset):
@@ -152,3 +152,28 @@ class Isolet(SkfeatureDataset):
 class Madelon(SkfeatureDataset):
     def __init__(self, root, download=False):
         super().__init__(root, "madelon", download)
+
+class MiceProtein(TensorDataset):
+    def __init__(self, root, train=True, download=False):
+        pass
+
+class Activity(TensorDataset):
+    def __init__(self, root, train=True, download=False):
+        if download:
+            download_activity(root)
+        x_train, y_train, x_test, y_test = load_activity(root)
+        if train:
+            super().__init__(torch.tensor(x_train, dtype=torch.float32), y_train)
+        else:
+            super().__init__(torch.tensor(x_test, dtype=torch.float32), y_test)
+
+
+class Isolet(TensorDataset):
+    def __init__(self, root, train=True, download=False):
+        if download:
+            download_isolet(root)
+        x_train, y_train, x_test, y_test = load_isolet(root)
+        if train:
+            super().__init__(torch.tensor(x_train, dtype=torch.float32), y_train)
+        else:
+            super().__init__(torch.tensor(x_test, dtype=torch.float32), y_test)
