@@ -2,6 +2,7 @@ import torch
 from torch.utils.data import TensorDataset
 
 from .skfeature import fetch_skfeature
+from .uci import fetch_isolet, fetch_mice, fetch_smartphone_activity
 
 
 class SkfeatureDataset(TensorDataset):
@@ -144,36 +145,29 @@ class Gisette(SkfeatureDataset):
         super().__init__(root, "gisette", download)
 
 
-class Isolet(SkfeatureDataset):
-    def __init__(self, root, download=False):
-        super().__init__(root, "Isolet", download)
+# class Isolet(SkfeatureDataset):
+#     def __init__(self, root, download=False):
+#         super().__init__(root, "Isolet", download)
 
 
 class Madelon(SkfeatureDataset):
     def __init__(self, root, download=False):
         super().__init__(root, "madelon", download)
 
+
 class MiceProtein(TensorDataset):
-    def __init__(self, root, train=True, download=False):
-        pass
+    def __init__(self, root, download=False):
+        x_train, y_train = fetch_mice(root, download=download)
+        super().__init__(torch.tensor(x_train, dtype=torch.float32), y_train)
+
 
 class Activity(TensorDataset):
     def __init__(self, root, train=True, download=False):
-        if download:
-            download_activity(root)
-        x_train, y_train, x_test, y_test = load_activity(root)
-        if train:
-            super().__init__(torch.tensor(x_train, dtype=torch.float32), y_train)
-        else:
-            super().__init__(torch.tensor(x_test, dtype=torch.float32), y_test)
+        X, y = fetch_smartphone_activity(root, train=train, download=download)
+        super().__init__(torch.tensor(X, dtype=torch.float32), torch.tensor(y))
 
 
 class Isolet(TensorDataset):
     def __init__(self, root, train=True, download=False):
-        if download:
-            download_isolet(root)
-        x_train, y_train, x_test, y_test = load_isolet(root)
-        if train:
-            super().__init__(torch.tensor(x_train, dtype=torch.float32), y_train)
-        else:
-            super().__init__(torch.tensor(x_test, dtype=torch.float32), y_test)
+        X, y = fetch_isolet(root, train=train, download=download)
+        super().__init__(torch.tensor(X, dtype=torch.float32), torch.tensor(y))
