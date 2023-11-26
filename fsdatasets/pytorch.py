@@ -2,6 +2,7 @@ import torch
 from torch.utils.data import TensorDataset
 
 from .skfeature import fetch_skfeature
+from .synthetic import make_invase
 from .uci import fetch_isolet, fetch_mice, fetch_smartphone_activity
 
 
@@ -158,16 +159,22 @@ class Madelon(SkfeatureDataset):
 class MiceProtein(TensorDataset):
     def __init__(self, root, download=False):
         x_train, y_train = fetch_mice(root, download=download)
-        super().__init__(torch.tensor(x_train, dtype=torch.float32), y_train)
+        super().__init__(torch.from_numpy(x_train), y_train)
 
 
 class Activity(TensorDataset):
     def __init__(self, root, train=True, download=False):
         X, y = fetch_smartphone_activity(root, train=train, download=download)
-        super().__init__(torch.tensor(X, dtype=torch.float32), torch.tensor(y))
+        super().__init__(torch.from_numpy(X), torch.from_numpy(y))
 
 
 class Isolet(TensorDataset):
     def __init__(self, root, train=True, download=False):
         X, y = fetch_isolet(root, train=train, download=download)
-        super().__init__(torch.tensor(X, dtype=torch.float32), torch.tensor(y))
+        super().__init__(torch.from_numpy(X), torch.from_numpy(y))
+
+
+class Invase(TensorDataset):
+    def __init__(self, name, n_samples=20_000, dim=11):
+        X, y = make_invase(name, n_samples=n_samples, dim=dim)
+        super().__init__(torch.from_numpy(X), torch.from_numpy(y))
