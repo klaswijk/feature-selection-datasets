@@ -36,11 +36,15 @@ def fetch_smartphone_activity(root, train=True, download=False):
 def fetch_isolet(root, train=True, download=False):
     path = Path(root, "isolet").expanduser()
     if not path.exists() and download:
-        import subprocess
+        import unlzw3
 
         download_zip("https://archive.ics.uci.edu/static/public/54/isolet.zip", path)
-        subprocess.run(["uncompress", path.joinpath("isolet1+2+3+4.data.Z")])
-        subprocess.run(["uncompress", path.joinpath("isolet5.data.Z")])
+        train = unlzw3.unlzw(path.joinpath("isolet1+2+3+4.data.Z"))
+        with open(path.joinpath("isolet1+2+3+4.data"), "wb") as f:
+            f.write(train)
+        test = unlzw3.unlzw(path.joinpath("isolet5.data.Z"))
+        with open(path.joinpath("isolet5.data"), "wb") as f:
+            f.write(test)
 
     if train:
         X = np.genfromtxt(
