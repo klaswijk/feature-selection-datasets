@@ -5,4 +5,5 @@ setup(
     version="0.0.1",
     packages=find_packages(include=["fsdatasets", "fsdatasets.*"]),
     install_requires=["numpy", "scipy", "torch"],
+    extras_require={"excel": ["pandas", "xlrd"], "z": ["unlzw3"]},
 )
