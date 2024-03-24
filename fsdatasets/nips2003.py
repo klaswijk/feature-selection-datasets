@@ -37,9 +37,9 @@ def fetch_nips2003(root, dataset, split="train", download=False, load="dense"):
         y = np.loadtxt(path.joinpath(f"{dataset.upper()}/{dataset}_train.labels"))
     elif split == "valid":
         X = np.loadtxt(path.joinpath(f"{dataset.upper()}/{dataset}_valid.data"))
-        y = np.loadtxt(path.joinpath(f"{dataset.upper()}/{dataset}_valid.labels"))
+        y = np.loadtxt(path.joinpath(f"{dataset}_valid.labels"))
     elif split == "test":
-        X = np.loadtxt(path.joinpath(f"{dataset}_test.data"))
+        X = np.loadtxt(path.joinpath(f"{dataset.upper()}/{dataset}_test.data"))
         y = np.ones_like(X) * np.inf
     else:
         raise ValueError("split must be one of 'train', 'valid', or 'test'")
@@ -61,7 +61,7 @@ def fetch_dexter(root, split="train", download=False):
         y = np.loadtxt(path.joinpath(f"DEXTER/dexter_train.labels"))
     elif split == "valid":
         X = load_sparse_format(path.joinpath(f"DEXTER/dexter_valid.data"), 300, 20_000)
-        y = np.loadtxt(path.joinpath(f"DEXTER/dexter_valid.labels"))
+        y = np.loadtxt(path.joinpath(f"dexter_valid.labels"))
     elif split == "test":
         X = load_sparse_format(path.joinpath(f"DEXTER/dexter_test.data"), 2000, 20_000)
         y = np.ones_like(X) * np.inf
@@ -85,7 +85,7 @@ def fetch_dorothea(root, split="train", download=False):
         X = load_sparse_format(
             path.joinpath(f"DOROTHEA/dorothea_valid.data"), 350, 100_000, binary=True
         )
-        y = np.loadtxt(path.joinpath(f"DOROTHEA/dorothea_valid.labels"))
+        y = np.loadtxt(path.joinpath(f"dorothea_valid.labels"))
     elif split == "test":
         X = load_sparse_format(
             path.joinpath(f"dorothea_test.data"), 800, 100_000, binary=True
@@ -107,16 +107,16 @@ def fetch_madelon(root, split="train", download=False):
 
 if __name__ == "__main__":
     X, y = fetch_arcene("data", download=True)
-    print(X.shape, y.shape)
+    print("arcene", X.shape, y.shape)
 
     X, y = fetch_dexter("data", download=True)
-    print(X.shape, y.shape)
+    print("dexter", X.shape, y.shape)
 
     X, y = fetch_dorothea("data", download=True)
-    print(X.shape, y.shape)
+    print("dorothea", X.shape, y.shape)
 
     X, y = fetch_gisette("data", download=True)
-    print(X.shape, y.shape)
+    print("gisette", X.shape, y.shape)
 
     X, y = fetch_madelon("data", download=True)
-    print(X.shape, y.shape)
+    print("madelon", X.shape, y.shape)
