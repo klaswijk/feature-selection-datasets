@@ -1,3 +1,4 @@
+from functools import partial
 from pathlib import Path
 
 import numpy as np
@@ -12,7 +13,21 @@ urls = {
 }
 
 
-def fetch_nips2003(root, dataset, split="train", download=False):
+def load_sparse_format(path, size, features, binary=False):
+    X = np.zeros((size, features))
+    with open(path) as f:
+        for i, line in enumerate(f.readlines()):
+            for entry in line.strip().split(" "):
+                if binary:
+                    feature = int(entry.strip())
+                    value = 1
+                else:
+                    feature, value = map(int, entry.strip().split(":"))
+                X[i, feature - 1] = value
+    return X
+
+
+def fetch_nips2003(root, dataset, split="train", download=False, load="dense"):
     path = Path(root, dataset).expanduser()
     if not path.exists() and download:
         download_zip(urls[dataset], path)
@@ -42,27 +57,16 @@ def fetch_dexter(root, split="train", download=False):
         download_zip(urls["dexter"], path)
 
     if split == "train":
-        size = 300
-        entries = path.joinpath(f"DEXTER/dexter_train.data")
+        X = load_sparse_format(path.joinpath(f"DEXTER/dexter_train.data"), 300, 20_000)
         y = np.loadtxt(path.joinpath(f"DEXTER/dexter_train.labels"))
     elif split == "valid":
-        size = 300
-        entries = path.joinpath(f"DEXTER/dexter_train.data")
+        X = load_sparse_format(path.joinpath(f"DEXTER/dexter_valid.data"), 300, 20_000)
         y = np.loadtxt(path.joinpath(f"DEXTER/dexter_valid.labels"))
     elif split == "test":
-        size = 2000
-        entries = path.joinpath(f"dexter_test.data")
-        y = np.ones(size) * np.inf
+        X = load_sparse_format(path.joinpath(f"DEXTER/dexter_test.data"), 2000, 20_000)
+        y = np.ones_like(X) * np.inf
     else:
         raise ValueError("split must be one of 'train', 'valid', or 'test'")
-
-    X = np.zeros((size, 20_000))
-    with open(entries) as f:
-        for i, line in enumerate(f.readlines()):
-            for entry in line.strip().split(" "):
-                feature, value = map(int, entry.strip().split(":"))
-                X[i, feature] = value
-
     y = np.maximum(0, y)  # -1 -> 0
     return X.astype(np.float32), y.astype(np.float32)
 
@@ -73,27 +77,22 @@ def fetch_dorothea(root, split="train", download=False):
         download_zip(urls["dorothea"], path)
 
     if split == "train":
-        size = 800
-        entries = path.joinpath(f"DOROTHEA/dorothea_train.data")
+        X = load_sparse_format(
+            path.joinpath(f"DOROTHEA/dorothea_train.data"), 800, 100_000, binary=True
+        )
         y = np.loadtxt(path.joinpath(f"DOROTHEA/dorothea_train.labels"))
     elif split == "valid":
-        size = 350
-        entries = path.joinpath(f"DOROTHEA/dorothea_train.data")
+        X = load_sparse_format(
+            path.joinpath(f"DOROTHEA/dorothea_valid.data"), 350, 100_000, binary=True
+        )
         y = np.loadtxt(path.joinpath(f"DOROTHEA/dorothea_valid.labels"))
     elif split == "test":
-        size = 800
-        entries = path.joinpath(f"dorothea_test.data")
-        y = np.ones(size) * np.inf
+        X = load_sparse_format(
+            path.joinpath(f"dorothea_test.data"), 800, 100_000, binary=True
+        )
+        y = np.ones_like(X) * np.inf
     else:
         raise ValueError("split must be one of 'train', 'valid', or 'test'")
-
-    X = np.zeros((size, 100_000))
-    with open(entries) as f:
-        for i, line in enumerate(f.readlines()):
-            for entry in line.strip().split(" "):
-                feature = int(entry.strip()) - 1
-                X[i, feature] = 1
-
     y = np.maximum(0, y)  # -1 -> 0
     return X.astype(np.float32), y.astype(np.float32)
 
