@@ -1,8 +1,8 @@
-from functools import partial
 from pathlib import Path
 
 import numpy as np
-from uci import download_zip
+
+from .uci import download_zip
 
 urls = {
     "arcene": "https://archive.ics.uci.edu/static/public/167/arcene.zip",
