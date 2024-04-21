@@ -57,7 +57,7 @@ def fetch_skfeature(name, folder, download=False):
         path.parent.mkdir(parents=True, exist_ok=True)
         urllib.request.urlretrieve(url, path)
     data = loadmat(path)
-    return data["X"], data["Y"]
+    return data["X"], data["Y"].ravel()
 
 
 if __name__ == "__main__":
