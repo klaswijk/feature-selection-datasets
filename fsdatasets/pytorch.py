@@ -159,7 +159,7 @@ class Madelon(SkfeatureDataset):
 class MiceProtein(TensorDataset):
     def __init__(self, root, download=False):
         x_train, y_train = fetch_mice(root, download=download)
-        super().__init__(torch.from_numpy(x_train), y_train)
+        super().__init__(torch.from_numpy(x_train), torch.from_numpy(y_train))
 
 
 class Activity(TensorDataset):
