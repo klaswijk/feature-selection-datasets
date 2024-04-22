@@ -52,12 +52,12 @@ def fetch_skfeature(name, folder, download=False):
         url = f"https://jundongl.github.io/scikit-feature/OLD/datasets/{name}.mat"
     else:
         raise ValueError(f"Unknown dataset '{name}'")
-    path = Path(folder, name + ".mat")
+    path = Path(folder, name, name + ".mat").expanduser()
     if not path.exists() and download:
         path.parent.mkdir(parents=True, exist_ok=True)
         urllib.request.urlretrieve(url, path)
     data = loadmat(path)
-    return data["X"], data["Y"].ravel()
+    return data["X"].astype("float32"), data["Y"].ravel().astype("long")
 
 
 if __name__ == "__main__":
